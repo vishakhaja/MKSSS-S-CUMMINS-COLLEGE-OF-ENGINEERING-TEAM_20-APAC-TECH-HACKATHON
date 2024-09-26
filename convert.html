@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Currency Converter</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>Convert USD to Other Currencies</h1>
+    <div class="converter-container">
+        <label for="usd_amount">Amount in USD:</label>
+        <input type="number" id="usd_amount" placeholder="Enter amount in USD" required>
+        
+        <label for="currency_code">Currency:</label>
+        <select id="currency_code">
+            <option value="EUR">EUR (Euro)</option>
+            <option value="GBP">GBP (British Pound)</option>
+            <option value="JPY">JPY (Japanese Yen)</option>
+            <option value="AUD">AUD (Australian Dollar)</option>
+            <option value="CAD">CAD (Canadian Dollar)</option>
+            <option value="CHF">CHF (Swiss Franc)</option>
+            <option value="CNY">CNY (Chinese Yuan)</option>
+            <option value="SGD">SGD (Singapore Dollar)</option>
+            <option value="ZAR">ZAR (South African Rand)</option>
+            <option value="BRL">BRL (Brazilian Real)</option>
+            <option value="DKK">DKK (Danish Krone)</option>
+            <option value="NZD">NZD (New Zealand Dollar)</option>
+            <option value="THB">THB (Thai Baht)</option>
+            <option value="INR">INR (Indian Rupee)</option>
+        </select>
+
+        <button onclick="convertCurrency()">Convert</button>
+        
+        <div class="result" id="conversionResult"></div>
+    </div>
+
+    <script>
+        const apiUrl = 'https://v6.exchangerate-api.com/v6/e9ae395767985c99a6a832eb/latest/USD'; // Replace with valid API key
+
+        async function convertCurrency() {
+            const usdAmount = document.getElementById('usd_amount').value;
+            const currencyCode = document.getElementById('currency_code').value;
+            const resultDiv = document.getElementById('conversionResult');
+
+            if (usdAmount === "" || usdAmount <= 0) {
+                resultDiv.innerText = "Please enter a valid amount.";
+                return;
+            }
+
+            try {
+                const response = await fetch(apiUrl);
+                
+                if (!response.ok) {
+                    throw new Error('Network response was not ok: ' + response.statusText);
+                }
+
+                const data = await response.json();
+                
+                // Check if conversion rates exist
+                if (!data.conversion_rates || !data.conversion_rates[currencyCode]) {
+                    resultDiv.innerText = "Currency not found in the conversion rates.";
+                    return;
+                }
+
+                const exchangeRate = data.conversion_rates[currencyCode];
+                const convertedAmount = (usdAmount * exchangeRate).toFixed(2);
+                resultDiv.innerText = `${convertedAmount} ${currencyCode}`;
+
+            } catch (error) {
+                resultDiv.innerText = "Error fetching exchange rate: " + error.message;
+            }
+        }
+    </script>
+</body>
+</html>

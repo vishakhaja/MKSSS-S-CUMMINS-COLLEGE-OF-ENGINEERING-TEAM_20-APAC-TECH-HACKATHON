@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exchange Rate Dashboard</title>
+    <style>
+        /* General Styles */
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #e9ecef; /* Light grey background */
+            color: #343a40; /* Dark grey text */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        /* Header Styles */
+        header {
+            background-color: #007bff; /* Bootstrap primary color */
+            color: #ffffff;
+            padding: 20px 0;
+            text-align: center;
+            width: 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            z-index: 10;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2.5rem;
+            font-weight: bold;
+        }
+
+        /* Main Section Styles */
+        main {
+            max-width: 1000px; /* Increased max-width for larger screens */
+            width: 90%; /* Set width to 90% of the viewport */
+            margin-top: 100px; /* To avoid overlap with the header */
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+            border: 1px solid #d1d1d1;
+        }
+
+        /* Card Styles for Results */
+        #exchangeRates {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #f8f9fa; /* Light background for results */
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e0e0e0;
+        }
+
+        /* Form Elements Styles */
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #007bff;
+        }
+
+        select,
+        input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        select:focus,
+        input:focus {
+            border-color: #007bff;
+            outline: none;
+        }
+
+        /* Button Styles */
+        button {
+            background-color: #007bff;
+            color: #ffffff;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            width: 100%;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        button:hover {
+            background-color: #0056b3;
+            transform: translateY(-2px);
+        }
+
+        /* Result Styles */
+        #highestRate,
+        #lowestRate {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        #highestRate {
+            color: #28a745; /* Green color for highest rate */
+        }
+
+        #lowestRate {
+            color: #dc3545; /* Red color for lowest rate */
+        }
+
+        /* Chart Container Styles */
+        #chartContainer {
+            margin-top: 30px;
+            height: 400px;
+            border-radius: 10px;
+            background-color: #f8f9fa;
+            padding: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>Exchange Rate Dashboard</h1>
+    </header>
+
+    <main>
+        <label for="currency1">Currency 1 (USD)</label>
+        <select id="currency1">
+            <option value="USD">USD</option>
+        </select>
+
+        <label for="currency2">Currency 2</label>
+        <select id="currency2"></select>
+
+        <label for="fileInput">Select CSV File:</label>
+        <input type="file" id="fileInput" accept=".csv">
+
+        <label for="duration">Select Duration</label>
+        <select id="duration">
+            <option value="weekly">Weekly</option>
+            <option value="monthly">Monthly</option>
+            <option value="quarterly">Quarterly</option>
+            <option value="yearly">Yearly</option>
+        </select>
+
+        <div id="exchangeRates">
+            <p id="highestRate"></p>
+            <p id="lowestRate"></p>
+        </div>
+
+        <button onclick="generateChart()">Generate Chart</button>
+
+        <div id="chartContainer"></div>
+    </main>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5"></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+
+    <script>
+        let exchangeRateData = [];
+
+        document.getElementById('fileInput').addEventListener('change', handleFileSelect);
+
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    parseCSV(e.target.result);
+                };
+                reader.readAsText(file);
+            }
+        }
+
+        function parseCSV(csvData) {
+            Papa.parse(csvData, {
+                header: true,
+                complete: function (result) {
+                    const currencies = Object.keys(result.data[0]).filter(currency => currency !== 'Date');
+                    populateCurrencyOptions(currencies);
+                    exchangeRateData = result.data;
+                }
+            });
+        }
+
+        function populateCurrencyOptions(currencies) {
+            const currency2Select = document.getElementById('currency2');
+            currency2Select.innerHTML = '';
+
+            currencies.forEach(currency => {
+                const option = document.createElement('option');
+                option.value = currency;
+                option.text = currency;
+                currency2Select.add(option);
+            });
+        }
+
+        function generateChart() {
+            const currency2 = document.getElementById('currency2').value;
+
+            if (!exchangeRateData || exchangeRateData.length === 0) {
+                alert('No data available for chart generation.');
+                return;
+            }
+
+            const chartData = exchangeRateData.map(entry => ({
+                x: entry.Date ? new Date(entry.Date) : null,
+                y: entry[currency2] ? parseFloat(entry[currency2]) : null,
+            })).filter(entry => entry.x !== null && entry.y !== null);
+
+            if (chartData.length === 0) {
+                alert('No valid data available for chart generation.');
+                return;
+            }
+
+            // Prepare chart options
+            const options = {
+                chart: {
+                    type: 'line',
+                    height: 350,
+                },
+                series: [{
+                    name: `${currency2}/USD Exchange Rate`,
+                    data: chartData,
+                }],
+                xaxis: {
+                    type: 'datetime',
+                },
+            };
+
+            // Render chart
+            const chart = new ApexCharts(document.getElementById('chartContainer'), options);
+            chart.render();
+
+            // Calculate highest and lowest rates
+            const highestEntry = chartData.reduce((prev, current) => (prev.y > current.y) ? prev : current);
+            const lowestEntry = chartData.reduce((prev, current) => (prev.y < current.y) ? prev : current);
+
+            // Display highest and lowest rates
+            document.getElementById('highestRate').textContent = `Highest exchange rate: ${highestEntry.y.toFixed(2)} on ${highestEntry.x.toISOString().split('T')[0]}`;
+            document.getElementById('lowestRate').textContent = `Lowest exchange rate: ${lowestEntry.y.toFixed(2)} on ${lowestEntry.x.toISOString().split('T')[0]}`;
+        }
+    </script>
+</body>
+
+</html>

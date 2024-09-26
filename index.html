@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Currency Exchange Analyzer</title>
+    <style>
+        /* Reset default styles */
+        body, h1, h2, h3, p, ul, li, nav {
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            background-color: #e0e7ff; /* Light blue background */
+            color: #333; /* Dark text */
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh; /* Full height layout */
+        }
+
+        header {
+            background: linear-gradient(135deg, #1624ee, #27c9f1); /* Gradient background */
+            color: #fff;
+            text-align: center;
+            padding: 1.5em 0;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        nav ul li {
+            margin: 0 30px;
+        }
+
+        nav ul li a {
+            text-decoration: none;
+            color: #fff;
+            font-size: 1.2rem;
+            padding: 8px 15px;
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+
+        nav ul li a:hover {
+            background-color: rgba(255, 255, 255, 0.2); /* Subtle hover effect */
+        }
+
+        main {
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 20px;
+            flex: 1; /* Allow main to grow */
+        }
+
+        section {
+            background-color: #ffffff; /* White background for sections */
+            border-radius: 8px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            margin-bottom: 15px;
+            font-size: 1.8rem;
+            color: #4bb2df; /* Matching section header color */
+        }
+
+        p {
+            font-size: 1rem;
+            line-height: 1.5;
+            color: #555; /* Dark grey for paragraphs */
+        }
+
+        footer {
+            text-align: center;
+            padding: 15px 0;
+            background-color: #419abd; /* Darker footer color */
+            color: #fff;
+            position: relative;
+            bottom: 0;
+            width: 100%;
+        }
+
+        footer p {
+            font-size: 0.9rem;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            nav ul {
+                flex-direction: column; /* Stack navigation links on small screens */
+            }
+
+            nav ul li {
+                margin: 10px 0; /* More space between links */
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>Currency Exchange Analyzer</h1>
+        <nav>
+            <ul>
+                <li><a href="another.html">Rates</a></li>
+                <li><a href="convert.html">Convert</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <section id="definition">
+            <h2>Understanding Currency Exchange</h2>
+            <p>Exchange rate is the price of one currency in terms of another currency. A currency appreciates if it takes more of another currency to buy it and depreciates if it takes less of another currency to buy it.</p>
+            <h3>Key Concepts</h3>
+            <p>1. **Appreciation**: When a currency increases in value relative to another currency.<br>
+               2. **Depreciation**: When a currency decreases in value relative to another currency.<br>
+               3. **Exchange Rate Determinants**: Economic indicators, interest rates, and market speculation can all influence exchange rates.</p>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2023 Currency Exchange Analyzer</p>
+    </footer>
+</body>
+
+</html>
